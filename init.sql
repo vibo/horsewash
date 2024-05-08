@@ -1,0 +1,56 @@
+CREATE TABLE IF NOT EXISTS User (
+    ID INTEGER PRIMARY KEY,
+    Sub TEXT,
+    Username TEXT
+);
+
+CREATE TABLE IF NOT EXISTS UserHighscore (
+    ID INTEGER PRIMARY KEY,
+    Name TEXT,
+    Score INTEGER,
+    FOREIGN KEY(ID) REFERENCES User(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Tournament (
+    ID INTEGER PRIMARY KEY,
+    Name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Team (
+    ID INTEGER PRIMARY KEY,
+    Name TEXT,
+    Logo TEXT,
+    TournamentID INTEGER,
+    FOREIGN KEY(TournamentID) REFERENCES Tournament(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Stage (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Name TEXT,
+    Stage TEXT,
+    TournamentID INTEGER,
+    FOREIGN KEY(TournamentID) REFERENCES Tournament(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Match (
+    ID INTEGER PRIMARY KEY,
+    AwayTeamID INTEGER,
+    Date TEXT,
+    GroupID INTEGER,
+    HomeTeamID INTEGER,
+    Outcome TEXT,
+    Status TEXT,
+    TournamentID INTEGER,
+    StageID INTEGER,
+    FOREIGN KEY(AwayTeamID) REFERENCES Team(ID),
+    FOREIGN KEY(HomeTeamID) REFERENCES Team(ID),
+    FOREIGN KEY(TournamentID) REFERENCES Tournament(ID),
+    FOREIGN KEY(StageID) REFERENCES Stage(ID)
+);
+
+CREATE TABLE IF NOT EXISTS Bet (
+    ID INTEGER PRIMARY KEY,
+    MatchID INTEGER,
+    Bet TEXT,
+    FOREIGN KEY(MatchID) REFERENCES Match(ID)
+);

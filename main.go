@@ -20,8 +20,8 @@ func main() {
 	}
 
 	clientID := os.Getenv("CLIENT_ID")
-	dbURL := os.Getenv("dbURL")
-	
+	dbURL := os.Getenv("DB_URL")
+
 	db, err := openDatabase(dbURL)
 	if err != nil {
 		log.Printf("Error: %v", err)
