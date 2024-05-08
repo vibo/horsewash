@@ -20,9 +20,21 @@ func main() {
 	}
 
 	clientID := os.Getenv("CLIENT_ID")
-	dbURL := os.Getenv("DB_URL")
+	if clientID == "" {
+		log.Fatal("CLIENT_ID is not set in the environment variables")
+	}
 
-	db, err := openDatabase(dbURL)
+	dbUrl := os.Getenv("DB_URL")
+	if clientID == "" {
+		log.Fatal("DB_URL is not set in the environment variables")
+	}
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	db, err := openDatabase(dbUrl)
 	if err != nil {
 		log.Printf("Error: %v", err)
 		log.Fatal("Unable to open a connection to the database")
@@ -30,6 +42,10 @@ func main() {
 	defer db.Close()
 
 	e := echo.New()
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
@@ -47,6 +63,8 @@ func main() {
 
 			if email, ok := payload.Claims["email"].(string); ok {
 				fmt.Println(email)
+			} else {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Email claim is missing in ID token")
 			}
 
 			c.Set("user_id", payload.Subject)
@@ -58,5 +76,5 @@ func main() {
 
 	setupRoutes(e, db)
 
-	e.Start(":8080")
+	e.Start(":" + port)
 }
