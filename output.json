@@ -1,0 +1,25 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Champions League",
+    "stages": {
+      "1": { "id": 1, "matches": null, "name": "Round of 32", "stage": "RO32" },
+      "2": { "id": 2, "matches": null, "name": "Round of 16", "stage": "RO16" },
+      "3": {
+        "id": 3,
+        "matches": null,
+        "name": "Quarter finals",
+        "stage": "QUARTER"
+      },
+      "4": { "id": 4, "matches": null, "name": "Semi finals", "stage": "SEMI" },
+      "5": { "id": 5, "matches": null, "name": "Final", "stage": "FINAL" }
+    },
+    "teams": {
+      "1": { "id": 1, "name": "AS Roma", "logo": "ROMA" },
+      "2": { "id": 2, "name": "Real Madrid", "logo": "REAL_MADRID" },
+      "3": { "id": 3, "name": "Bayern Münich", "logo": "BAYERN" },
+      "4": { "id": 4, "name": "Barcelona", "logo": "BARCA" },
+      "5": { "id": 5, "name": "Dortmund", "logo": "DORTMUND" }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -75,6 +76,20 @@ func main() {
 	e.Use(middleware.Logger())
 
 	setupRoutes(e, db)
+
+
+	tournaments, err:= db.GetTournaments()
+	if err != nil {
+		log.Fatal(err)
+	}
+ 
+	fmt.Println("Tournaments")
+
+	data, err := json.Marshal(tournaments)
+	if err != nil {
+		log.Fatal("Failed to jsonify")
+	}
+	os.WriteFile("./output.json", data, 0644)
 
 	e.Start(":" + port)
 }
