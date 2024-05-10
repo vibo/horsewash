@@ -5,7 +5,7 @@ import "time"
 type Bet struct {
 	ID      int    `json:"id"`
 	MatchID int    `json:"matchId"`
-	Bet     string `json:"bet"` 
+	Bet     string `json:"bet"`
 }
 
 type Highscore map[int]UserHighscore
@@ -24,16 +24,16 @@ type Match struct {
 }
 
 type Stage struct {
-	ID 			int						`json:"id"`
+	ID      int           `json:"id"`
 	Matches map[int]Match `json:"matches"`
 	Name    string        `json:"name"`
 	Stage   string        `json:"stage"`
 }
 
 type Team struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	Logo         string `json:"logo"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Logo string `json:"logo"`
 }
 
 type Tournament struct {
@@ -41,6 +41,11 @@ type Tournament struct {
 	Name   string        `json:"name"`
 	Stages map[int]Stage `json:"stages"`
 	Teams  map[int]Team  `json:"teams"`
+}
+
+type TournamentSummary struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type User struct {

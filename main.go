@@ -77,13 +77,10 @@ func main() {
 
 	setupRoutes(e, db)
 
-
 	tournaments, err:= db.GetTournaments()
 	if err != nil {
 		log.Fatal(err)
 	}
- 
-	fmt.Println("Tournaments")
 
 	data, err := json.Marshal(tournaments)
 	if err != nil {
