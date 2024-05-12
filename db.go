@@ -8,7 +8,7 @@ import (
 
 	_ "modernc.org/sqlite"
 )
-
+ 
 
 type DB struct {
 	*sql.DB
@@ -53,10 +53,11 @@ func (db *DB) GetUser(id string) (*User, error ) {
 	return user, nil
 }
 
-func (db *DB) GetTournament(id int) (*Tournament, error ) {
-	tournament := &Tournament{
-		Stages: make(map[int]Stage),
-		Teams:  make(map[int]Team),
+func (db *DB) GetTournament(id int) (*TournamentDetail, error ) {
+	tournament := &TournamentDetail{
+		EliminationRounds: make(map[int]EliminationRound),
+		Groups: make(map[int]Group),
+		Teams: make(map[int]Team),
 	}
 
 	err := db.QueryRow("SELECT * FROM Tournament WHERE id = ?", id).Scan(&tournament.ID, &tournament.Name)
@@ -64,19 +65,34 @@ func (db *DB) GetTournament(id int) (*Tournament, error ) {
 		return nil, err
 	}
 
-	rows, err := db.Query("SELECT * FROM Stage WHERE TournamentID = ?", id)
+	rows, err := db.Query("SELECT * FROM Elimination WHERE TournamentID = ?", id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var stage Stage
-		err = rows.Scan(&stage.ID, &stage.Name, &stage.Stage)
+		var eliminationRound EliminationRound
+		err = rows.Scan(&eliminationRound.ID, &eliminationRound.Name, &eliminationRound.Matches)
 		if err != nil {
 			return nil, err
 		}
-		tournament.Stages[stage.ID] = stage
+		tournament.EliminationRounds[eliminationRound.ID] = eliminationRound
+	}
+
+	rows, err = db.Query("SELECT * FROM Group WHERE TournamentID = ?", id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var group Group
+		err = rows.Scan(&group.ID, &group.Name, &group.Matches, &group.Teams)
+		if err != nil {
+			return nil, err
+		}
+		tournament.Groups[group.ID] = group
 	}
 
 	rows, err = db.Query("SELECT * FROM Team WHERE TournamentID = ?", id)
@@ -142,12 +158,13 @@ func (db *DB) GetTournamentBets(id int) (map[int]Bet, error) {
 func (db *DB) GetMatch(id int) (*Match, error) {
 	match := &Match{}
 
+	var dateStr string
+
 	err := db.QueryRow("SELECT * FROM Match WHERE ID = ?", id).Scan(
 		&match.ID,
 		&match.AwayScore,
 		&match.AwayTeamID,
-		&match.Date,
-		&match.GroupID,
+		&dateStr,
 		&match.HomeScore,
 		&match.HomeTeamID,
 		&match.Outcome,
@@ -158,5 +175,47 @@ func (db *DB) GetMatch(id int) (*Match, error) {
 		return nil, err
 	}
 
+	match.Date, err = time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		return nil, err
+	}
+
 	return match, nil
+}
+
+func (db *DB) GetMatchDetails(id int) (*MatchDetail, error) {
+	match, err := db.GetMatch(id)
+	if err != nil {
+		return nil, err
+	}
+
+	matchDetail := &MatchDetail{
+		ID:           match.ID,
+		AwayScore:    match.AwayScore,
+		AwayTeamID:   match.AwayTeamID,
+		Date:         match.Date,
+		HomeScore:    match.HomeScore,
+		HomeTeamID:   match.HomeTeamID,
+		Outcome:      match.Outcome,
+		Status:       match.Status,
+		TournamentID: match.TournamentID,
+		Bets:         make(map[int]Bet),
+	}
+
+	rows, err := db.Query("SELECT * FROM Bet WHERE MatchID = ?", match.ID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var bet Bet
+		err = rows.Scan(&bet.ID, &bet.Bet, &bet.MatchID, &bet.UserID)
+		if err != nil {
+			return nil, err
+		}
+		matchDetail.Bets[bet.ID] = bet
+	}
+
+	return matchDetail, nil
 }

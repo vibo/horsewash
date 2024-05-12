@@ -1,1 +1,44 @@
-{"1":{"id":1,"name":"Champions League"}}
+{
+  "id": 1,
+  "name": "Champions League",
+  "stage": "GROUP",
+  "elimination": {
+    "RO32": {
+      "matches": {
+        "1": {}
+      }
+    },
+    "RO16": {
+      "matches": {
+        "1": {}
+      }
+    },
+    "QUARTER": {
+      "matches": {
+        "1": {}
+      }
+    },
+    "SEMI": {
+      "matches": {
+        "1": {}
+      }
+    },
+    "FINAL": {
+      "matches": {
+        "1": {}
+      }
+    }
+  },
+  "groups": {
+    "1": {
+      "matches": {
+        "1": {}
+      }
+    }
+  },
+  "teams": {
+    "1": {
+      "name": "Roma"
+    }
+  }
+}

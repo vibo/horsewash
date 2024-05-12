@@ -16,7 +16,6 @@ CREATE TABLE IF NOT EXISTS Tournament (
     Name TEXT
 );
 
-
 CREATE TABLE IF NOT EXISTS Team (
     ID INTEGER PRIMARY KEY,
     Name TEXT,
@@ -25,37 +24,57 @@ CREATE TABLE IF NOT EXISTS Team (
     FOREIGN KEY(TournamentID) REFERENCES Tournament(ID)
 );
 
+CREATE TABLE IF NOT EXISTS EliminationRound (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Stage TEXT,
+    TournamentID INTEGER,
+    FOREIGN KEY(TournamentID) REFERENCES Tournament(ID)
+);
 
-
-CREATE TABLE IF NOT EXISTS Stage (
+CREATE TABLE IF NOT EXISTS Group (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT,
-    Stage TEXT,
     TournamentID INTEGER,
     FOREIGN KEY(TournamentID) REFERENCES Tournament(ID)
 );
 
 CREATE TABLE IF NOT EXISTS Match (
     ID INTEGER PRIMARY KEY,
+    AwayScore INTEGER,
     AwayTeamID INTEGER,
     Date TEXT,
-    GroupID INTEGER,
+    HomeScore INTEGER,
     HomeTeamID INTEGER,
     Outcome TEXT,
     Status TEXT,
-    TournamentID INTEGER,
-    StageID INTEGER,
     FOREIGN KEY(AwayTeamID) REFERENCES Team(ID),
     FOREIGN KEY(HomeTeamID) REFERENCES Team(ID),
     FOREIGN KEY(TournamentID) REFERENCES Tournament(ID),
-    FOREIGN KEY(StageID) REFERENCES Stage(ID)
+);
+
+CREATE TABLE IF NOT EXISTS GroupMatches (
+    GroupID INTEGER,
+    MatchID INTEGER,
+    PRIMARY KEY(GroupID, MatchID),
+    FOREIGN KEY(GroupID) REFERENCES Group(ID),
+    FOREIGN KEY(MatchID) REFERENCES Match(ID)
+);
+
+CREATE TABLE IF NOT EXISTS EliminationRoundMatches (
+    EliminationRoundID INTEGER,
+    MatchID INTEGER,
+    PRIMARY KEY(EliminationRoundID, MatchID),
+    FOREIGN KEY(EliminationRoundID) REFERENCES EliminationRound(ID),
+    FOREIGN KEY(MatchID) REFERENCES Match(ID)
 );
 
 CREATE TABLE IF NOT EXISTS Bet (
     ID INTEGER PRIMARY KEY,
-    MatchID INTEGER,
     Bet TEXT,
-    FOREIGN KEY(MatchID) REFERENCES Match(ID)
+    MatchID INTEGER,
+    UserID INTEGER,
+    FOREIGN KEY(MatchID) REFERENCES Match(ID),
+    FOREIGN KEY(UserID) REFERENCES User(ID)
 );
 
 -- INSERT INTO Tournament (ID, Name) VALUES 
@@ -74,3 +93,15 @@ CREATE TABLE IF NOT EXISTS Bet (
 -- ('Quarter finals', "QUARTER", 1),
 -- ('Semi finals', "SEMI", 1),
 -- ('Final', "FINAL", 1);
+
+-- INSERT INTO Match (AwayScore, AwayTeamID, Date, HomeScore, HomeTeamID, Status, TournamentID, StageID) VALUES 
+-- (0, 1, '2024-05-01', 0, 2, 'Scheduled', 1, 1),
+-- (0, 3, '2024-05-02', 0, 4, 'Scheduled', 1, 1),
+-- (0, 5, '2024-05-03', 0, 1, 'Scheduled', 1, 2),
+-- (0, 2, '2024-05-04', 0, 3, 'Scheduled', 1, 2);
+
+-- INSERT INTO Bet (MatchID, UserID, Bet) VALUES 
+-- (1, 1, 'HOME'),
+-- (2, 1, 'AWAY'),
+-- (3, 2, 'DRAW'),
+-- (4, 2, 'HOME');

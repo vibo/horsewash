@@ -77,12 +77,12 @@ func main() {
 
 	setupRoutes(e, db)
 
-	tournaments, err:= db.GetTournaments()
+	match, err:= db.GetMatchDetails(1)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	data, err := json.Marshal(tournaments)
+	data, err := json.Marshal(match)
 	if err != nil {
 		log.Fatal("Failed to jsonify")
 	}

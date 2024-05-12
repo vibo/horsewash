@@ -4,8 +4,23 @@ import "time"
 
 type Bet struct {
 	ID      int    `json:"id"`
-	MatchID int    `json:"matchId"`
 	Bet     string `json:"bet"`
+	MatchID int    `json:"matchId"`
+	UserID  int    `json:"userId"`
+}
+
+type EliminationRound struct {
+	ID      int
+	Name    string `json:"name"`
+	Matches []int  `json:"matches"`
+	Teams   []int  `json:"teams"`
+}
+
+type Group struct {
+	ID      int
+	Name    string `json:"name"`
+	Matches []int  `json:"matches"`
+	Teams   []int  `json:"teams"`
 }
 
 type Highscore map[int]UserHighscore
@@ -15,19 +30,24 @@ type Match struct {
 	AwayScore    int       `json:"awayScore"`
 	AwayTeamID   int       `json:"awayTeamId"`
 	Date         time.Time `json:"date"`
-	GroupID      int       `json:"groupId"`
-	HomeScore    []int     `json:"homeScore"`
+	HomeScore    int       `json:"homeScore"`
 	HomeTeamID   int       `json:"homeTeamId"`
 	Outcome      string    `json:"outcome"`
 	Status       string    `json:"status"`
 	TournamentID int       `json:"tournamentId"`
 }
 
-type Stage struct {
-	ID      int           `json:"id"`
-	Matches map[int]Match `json:"matches"`
-	Name    string        `json:"name"`
-	Stage   string        `json:"stage"`
+type MatchDetail struct {
+	ID           int         `json:"id"`
+	AwayScore    int         `json:"awayScore"`
+	AwayTeamID   int         `json:"awayTeamId"`
+	Date         time.Time   `json:"date"`
+	HomeScore    int         `json:"homeScore"`
+	HomeTeamID   int         `json:"homeTeamId"`
+	Outcome      string      `json:"outcome"`
+	Status       string      `json:"status"`
+	TournamentID int         `json:"tournamentId"`
+	Bets         map[int]Bet `json:"bets"`
 }
 
 type Team struct {
@@ -36,16 +56,19 @@ type Team struct {
 	Logo string `json:"logo"`
 }
 
-type Tournament struct {
-	ID     int           `json:"id"`
-	Name   string        `json:"name"`
-	Stages map[int]Stage `json:"stages"`
-	Teams  map[int]Team  `json:"teams"`
-}
-
 type TournamentSummary struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type TournamentDetail struct {
+	ID                int                       `json:"id"`
+	EliminationRounds map[int]EliminationRound `json:"eliminationRounds"`
+	Groups            map[int]Group             `json:"groups"`
+	Matches           map[int]Match             `json:"matches"`
+	Name              string                    `json:"name"`
+	Stage             string                    `json:"stage"`
+	Teams             map[int]Team              `json:"teams"`
 }
 
 type User struct {
