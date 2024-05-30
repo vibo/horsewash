@@ -219,3 +219,17 @@ func (db *DB) GetMatchDetails(id int) (*MatchDetail, error) {
 
 	return matchDetail, nil
 }
+
+func (db *DB) PostBet(bet Bet) error {
+	stmt := `
+		INSERT INTO Bet (Bet, MatchID, UserID)
+		VALUES ($1, $2, $3)
+	`
+
+	_, err := db.Exec(stmt, bet.Bet, bet.MatchID, bet.UserID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -63,7 +63,8 @@ type TournamentSummary struct {
 
 type TournamentDetail struct {
 	ID                int                       `json:"id"`
-	EliminationRounds map[int]EliminationRound `json:"eliminationRounds"`
+	Bets 							map[int]Bet 							`json:"bets"`
+	EliminationRounds map[int]EliminationRound  `json:"eliminationRounds"`
 	Groups            map[int]Group             `json:"groups"`
 	Matches           map[int]Match             `json:"matches"`
 	Name              string                    `json:"name"`

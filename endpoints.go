@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -16,8 +18,8 @@ func setupRoutes(e *echo.Echo, db *DB) {
 	e.GET("/users/:id", handler.getUser)
 	e.GET("/tournaments", handler.getTournaments)
 	e.GET("/tournaments/:id", handler.getTournament)
-	e.GET("/tournaments/:id/bets", handler.getTournamentBets)
 	e.GET("/match/:id", handler.getMatch)
+	e.POST("/match/:id/bet", handler.postBet)
 }
 
 func (h *Handler) getUser(c echo.Context) error {
@@ -82,4 +84,28 @@ func (h *Handler) getMatch(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, match)
+}
+
+func (h *Handler) postBet(c echo.Context) error {
+	resBody, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	var bet Bet
+	if err := json.Unmarshal(resBody, &bet); err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	if bet.MatchID <= 0 && (bet.Bet == "HOME" || bet.Bet == "AWAY" || bet.Bet == "DRAW")  {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	err = h.DB.PostBet(bet)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	// ?
+	return c.NoContent(http.StatusOK)
 }
